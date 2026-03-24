@@ -1,6 +1,15 @@
 import { apiFetch } from "./api";
 import { getToken } from "./auth";
 
+export type Rating = {
+  id: string;
+  value: number;
+  userId: string;
+  recipeId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type Recipe = {
   id: string;
   title: string;
@@ -14,6 +23,7 @@ export type Recipe = {
     name: string;
     email: string;
   };
+  ratings: Rating[];
 };
 
 export type CreateRecipePayload = {
@@ -53,5 +63,19 @@ export async function createRecipe(data: CreateRecipePayload) {
     method: "POST",
     token,
     body: JSON.stringify(data),
+  });
+}
+
+export async function rateRecipe(recipeId: string, value: number) {
+  const token = getToken();
+
+  if (!token) {
+    throw new Error("No token");
+  }
+
+  return apiFetch(`/recipes/${recipeId}/rating`, {
+    method: "POST",
+    token,
+    body: JSON.stringify({ value }),
   });
 }
